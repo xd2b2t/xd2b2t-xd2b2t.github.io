@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inicio - Sistema de Reservas</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6c5ce7;
+            --primary-light: #a29bfe;
+            --primary-dark: #5649c0;
+            --secondary: #00b894;
+            --danger: #d63031;
+            --warning: #fdcb6e;
+            --dark-1: #121212;
+            --dark-2: #1e1e1e;
+            --dark-3: #2a2a2a;
+            --light-1: #f5f6fa;
+            --light-2: #d2dae2;
+            --light-3: #a4b0be;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            --transition: all 0.3s ease;
+            --gradient: linear-gradient(135deg, var(--primary), var(--secondary));
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--dark-1);
+            color: var(--light-1);
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .header {
+            background: var(--gradient);
+            padding: 1rem 0;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-icon {
+            font-size: 1.8rem;
+            color: white;
+        }
+
+        .logo-text h1 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .main-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: calc(100vh - 80px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .background-pattern {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0.03;
+            background-image: 
+                radial-gradient(circle at 25% 25%, var(--primary-light) 0%, transparent 20%),
+                radial-gradient(circle at 75% 75%, var(--secondary) 0%, transparent 20%);
+            background-size: 50px 50px;
+            animation: patternMove 60s linear infinite;
+        }
+
+        @keyframes patternMove {
+            0% {
+                background-position: 0 0;
+            }
+            100% {
+                background-position: 1000px 1000px;
+            }
+        }
+
+        .welcome-text {
+            text-align: center;
+            margin-bottom: 3rem;
+            z-index: 2;
+            animation: fadeIn 1s ease-out;
+        }
+
+        .welcome-text h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .welcome-text p {
+            font-size: 1.1rem;
+            color: var(--light-2);
+            max-width: 600px;
+        }
+
+        .start-button {
+            position: relative;
+            padding: 1.2rem 2.5rem;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 50px;
+            background: var(--gradient);
+            color: white;
+            cursor: pointer;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(108, 92, 231, 0.4);
+            transition: var(--transition);
+            z-index: 2;
+            animation: pulse 2s infinite, bounceIn 1s ease-out;
+        }
+
+        .start-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(108, 92, 231, 0.6);
+        }
+
+        .start-button:active {
+            transform: translateY(0);
+        }
+
+        .start-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, 
+                transparent 20%, 
+                rgba(255, 255, 255, 0.2) 50%, 
+                transparent 80%);
+            transform: translateX(-100%);
+            transition: transform 0.6s ease;
+            z-index: -1;
+        }
+
+        .start-button:hover::before {
+            transform: translateX(100%);
+        }
+
+        .floating-elements {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .floating-element {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.1;
+            animation: float 15s infinite linear;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-50px) rotate(180deg);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes bounceIn {
+            0% {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            70% {
+                transform: scale(1.05);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 10px 30px rgba(108, 92, 231, 0.4);
+            }
+            50% {
+                box-shadow: 0 10px 40px rgba(108, 92, 231, 0.6);
+            }
+            100% {
+                box-shadow: 0 10px 30px rgba(108, 92, 231, 0.4);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                padding: 0 1rem;
+            }
+            
+            .welcome-text h2 {
+                font-size: 2rem;
+            }
+            
+            .welcome-text p {
+                font-size: 1rem;
+                padding: 0 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-calendar-alt"></i>
+                </div>
+                <div class="logo-text">
+                    <h1>Sistema de Reservas</h1>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main content -->
+    <main class="main-container">
+        <div class="background-pattern"></div>
+        
+        <div class="floating-elements">
+            <div class="floating-element" style="width: 100px; height: 100px; background: var(--primary); top: 20%; left: 10%; animation-duration: 20s;"></div>
+            <div class="floating-element" style="width: 150px; height: 150px; background: var(--secondary); top: 60%; left: 80%; animation-duration: 25s;"></div>
+            <div class="floating-element" style="width: 80px; height: 80px; background: var(--warning); top: 30%; left: 70%; animation-duration: 18s;"></div>
+        </div>
+        
+        <div class="welcome-text">
+            <h2>Bienvenido al Sistema</h2>
+            <p>Gestiona tus reservas de manera sencilla y eficiente con nuestra plataforma intuitiva y moderna.</p>
+        </div>
+        
+        <button class="start-button" onclick="window.location.href='login.html'">
+            <i class="fas fa-arrow-right" style="margin-right: 10px;"></i>
+            Comenzar
+        </button>
+    </main>
+
+    <script>
+        // Crear elementos flotantes adicionales dinámicamente
+        document.addEventListener('DOMContentLoaded', function() {
+            const floatingContainer = document.querySelector('.floating-elements');
+            const colors = [var(--primary), var(--secondary), var(--warning), var(--danger)];
+            
+            for (let i = 0; i < 5; i++) {
+                const size = Math.random() * 80 + 50;
+                const element = document.createElement('div');
+                element.className = 'floating-element';
+                element.style.width = `${size}px`;
+                element.style.height = `${size}px`;
+                element.style.background = colors[Math.floor(Math.random() * colors.length)];
+                element.style.top = `${Math.random() * 80 + 10}%`;
+                element.style.left = `${Math.random() * 80 + 10}%`;
+                element.style.animationDuration = `${Math.random() * 15 + 10}s`;
+                element.style.animationDelay = `${Math.random() * 5}s`;
+                floatingContainer.appendChild(element);
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Reservas</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6c5ce7;
+            --primary-light: #a29bfe;
+            --primary-dark: #5649c0;
+            --secondary: #00b894;
+            --danger: #d63031;
+            --warning: #fdcb6e;
+            --dark-1: #121212;
+            --dark-2: #1e1e1e;
+            --dark-3: #2a2a2a;
+            --light-1: #f5f6fa;
+            --light-2: #d2dae2;
+            --light-3: #a4b0be;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            --transition: all 0.3s ease;
+            --gradient: linear-gradient(135deg, var(--primary), var(--secondary));
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--dark-1);
+            color: var(--light-1);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: var(--gradient);
+            padding: 1rem 0;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-icon {
+            font-size: 1.8rem;
+            color: white;
+        }
+
+        .logo-text h1 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-role {
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .logout-btn {
+            background: none;
+            border: none;
+            color: var(--light-1);
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .main {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        .card {
+            background-color: var(--dark-2);
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .card-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--dark-3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .card-icon {
+            color: var(--primary-light);
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.25rem;
+        }
+
+        @media (min-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--light-2);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            background-color: var(--dark-3);
+            border: 1px solid var(--dark-3);
+            border-radius: 10px;
+            color: var(--light-1);
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.9rem;
+        }
+
+        select.form-control {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1em;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.8rem 1.5rem;
+            border-radius: 10px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--gradient);
+            color: white;
+        }
+
+        .btn-sm {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.8rem;
+        }
+
+        .btn-success {
+            background-color: var(--secondary);
+            color: white;
+        }
+
+        .btn-danger {
+            background-color: var(--danger);
+            color: white;
+        }
+
+        .btn-warning {
+            background-color: var(--warning);
+            color: var(--dark-1);
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            border-radius: 10px;
+            border: 1px solid var(--dark-3);
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            color: var(--light-1);
+            min-width: 800px;
+        }
+
+        .table th {
+            background-color: var(--dark-3);
+            font-weight: 600;
+            text-align: left;
+            padding: 1rem;
+        }
+
+        .table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--dark-3);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.35rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .badge-success {
+            background-color: rgba(0, 184, 148, 0.1);
+            color: var(--secondary);
+            border: 1px solid var(--secondary);
+        }
+
+        .badge-warning {
+            background-color: rgba(253, 203, 110, 0.1);
+            color: var(--warning);
+            border: 1px solid var(--warning);
+        }
+
+        .badge-danger {
+            background-color: rgba(214, 48, 49, 0.1);
+            color: var(--danger);
+            border: 1px solid var(--danger);
+        }
+
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            color: white;
+            font-weight: 500;
+            box-shadow: var(--shadow);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .notification.success {
+            background-color: var(--secondary);
+        }
+
+        .notification.error {
+            background-color: var(--danger);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 2rem;
+            color: var(--light-3);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                padding: 0 1rem;
+            }
+            .main {
+                padding: 0 1rem;
+            }
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-calendar-alt"></i>
+                </div>
+                <div class="logo-text">
+                    <h1>Sistema de Reservas</h1>
+                </div>
+            </div>
+            <div class="user-info">
+                <span id="user-role" class="user-role">Cargando...</span>
+                <div class="user-menu">
+                    <button id="logout-btn" class="logout-btn">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Salir</span>
+                    </button>
+                    
+
+                    
+                    <a href="boot.html" class="logout-btn">
+                        <button id="" class="logout-btn">
+                            <i class=""></i>
+                            <span>boort</span>
+                        </button>
+                    </a>
+
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main content -->
+    <main class="main">
+        <!-- Formulario de reserva (solo para docentes) -->
+        <section id="reservation-form-section" class="card">
+            <div class="card-header">
+                <h2 class="card-title">
+                    <i class="fas fa-plus-circle card-icon"></i>
+                    Nueva Reservación
+                </h2>
+            </div>
+            <div class="card-body">
+                <form id="reservation-form">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="resource" class="form-label">Salón</label>
+                            <select id="resource" class="form-control" required>
+                                <option value="" disabled selected>Cargando salones...</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="date" class="form-label">Fecha</label>
+                            <input type="date" id="date" class="form-control" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="start-time" class="form-label">Hora de inicio</label>
+                            <select id="start-time" class="form-control" required>
+                                <option value="" disabled selected>Seleccione...</option>
+                                <option value="07:00">7:00 AM</option>
+                                <option value="08:00">8:00 AM</option>
+                                <option value="09:00">9:00 AM</option>
+                                <option value="10:00">10:00 AM</option>
+                                <option value="11:00">11:00 AM</option>
+                                <option value="12:00">12:00 PM</option>
+                                <option value="13:00">1:00 PM</option>
+                                <option value="14:00">2:00 PM</option>
+                                <option value="15:00">3:00 PM</option>
+                                <option value="16:00">4:00 PM</option>
+                                <option value="17:00">5:00 PM</option>
+                                <option value="18:00">6:00 PM</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="end-time" class="form-label">Hora de fin</label>
+                            <select id="end-time" class="form-control" required>
+                                <option value="" disabled selected>Seleccione...</option>
+                                <option value="08:00">8:00 AM</option>
+                                <option value="09:00">9:00 AM</option>
+                                <option value="10:00">10:00 AM</option>
+                                <option value="11:00">11:00 AM</option>
+                                <option value="12:00">12:00 PM</option>
+                                <option value="13:00">1:00 PM</option>
+                                <option value="14:00">2:00 PM</option>
+                                <option value="15:00">3:00 PM</option>
+                                <option value="16:00">4:00 PM</option>
+                                <option value="17:00">5:00 PM</option>
+                                <option value="18:00">6:00 PM</option>
+                                <option value="19:00">7:00 PM</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="purpose" class="form-label">Propósito</label>
+                            <input type="text" id="purpose" class="form-control" placeholder="Ej: Clase de programación" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="group" class="form-label">Asignatura</label>
+                            <select id="group" class="form-control">
+                                <option value="" disabled selected>Cargando asignaturas...</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 1.5rem; display: flex; justify-content: flex-end;">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Reservar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- Listado de reservaciones -->
+        <section class="card">
+            <div class="card-header">
+                <h2 class="card-title">
+                    <i class="fas fa-list card-icon"></i>
+                    Reservaciones
+                </h2>
+                <button id="refresh-btn" class="btn-icon" title="Actualizar">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Salón</th>
+                                <th>Fecha</th>
+                                <th>Horario</th>
+                                <th>Propósito</th>
+                                <th>Asignatura</th>
+                                <th>Solicitante</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="reservations-table">
+                            <tr>
+                                <td colspan="8" class="empty-state">Cargando reservaciones...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Firebase y aplicación -->
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-auth-compat.js"></script>
+    
+    <script>
+        // Configuración de Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyC8JDhWWp1jmqJvbu8s2Dsz0Yg2W0F61_s",
+            authDomain: "reservas-universidad.firebaseapp.com",
+            projectId: "reservas-universidad",
+            storageBucket: "reservas-universidad.appspot.com",
+            messagingSenderId: "1020769094680",
+            appId: "1:1020769094680:web:981ed8ea4a8b63be0b076d"
+        };
+
+        // Inicializar Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+
+        // Referencias del DOM
+        const reservationForm = document.getElementById('reservation-form');
+        const reservationsTable = document.getElementById('reservations-table');
+        const refreshBtn = document.getElementById('refresh-btn');
+        const logoutBtn = document.getElementById('logout-btn');
+        const userRoleSpan = document.getElementById('user-role');
+        const reservationFormSection = document.getElementById('reservation-form-section');
+        const resourceSelect = document.getElementById('resource');
+        const groupSelect = document.getElementById('group');
+
+        // Variables globales
+        let currentUser = null;
+        let isAdmin = false;
+
+        // Cargar reservaciones al iniciar
+        document.addEventListener('DOMContentLoaded', () => {
+            // Verificar autenticación
+            auth.onAuthStateChanged(async user => {
+                if (user) {
+                    currentUser = user;
+                    
+                    // Verificar si es admin (deberías tener una colección 'users' con el campo 'role')
+                    try {
+                        const userDoc = await db.collection('users').doc(user.uid).get();
+                        if (userDoc.exists) {
+                            const userData = userDoc.data();
+                            isAdmin = userData.role === 'admin';
+                            
+                            // Mostrar rol en la interfaz
+                            userRoleSpan.textContent = isAdmin ? 'Administrador' : 'Docente';
+                            
+                            // Ocultar formulario de reserva si es admin
+                            if (isAdmin) {
+                                reservationFormSection.style.display = 'none';
+                            }
+                        }
+                    } catch (error) {
+                        console.error("Error al verificar rol:", error);
+                        userRoleSpan.textContent = 'Usuario';
+                    }
+                    
+                    // Configurar fecha mínima como hoy
+                    const today = new Date().toISOString().split('T')[0];
+                    document.getElementById('date').min = today;
+                    
+                    // Cargar datos iniciales
+                    loadSalones(); // Cargar salones disponibles
+                    loadMateriasDocente(); // Cargar materias del docente
+                    loadReservations(); // Cargar reservaciones
+                } else {
+                    window.location.href = 'login.html';
+                }
+            });
+        });
+
+        // Función para cargar los salones disponibles
+        async function loadSalones() {
+            try {
+                console.log("Cargando salones..."); // Debug
+                resourceSelect.innerHTML = '<option value="" disabled selected>Cargando salones...</option>';
+
+                const querySnapshot = await db.collection('salones').get();
+                console.log("Salones encontrados:", querySnapshot.size); // Debug
+            
+                resourceSelect.innerHTML = '<option value="" disabled selected>Seleccione un salón...</option>';
+
+                if (querySnapshot.empty) {
+                    console.warn("No se encontraron salones en la base de datos");
+                    // Opción temporal con salones básicos
+                    const salonesDefault = [
+                        {nombre: "Laboratorio 1", edificio: "Principal", piso: 1, capacidad: 20},
+                        {nombre: "Laboratorio 2", edificio: "Principal", piso: 1, capacidad: 20},
+                        {nombre: "Aula Magna", edificio: "Principal", piso: 0, capacidad: 100}
+                    ];
+
+                    salonesDefault.forEach(salon => {
+                        const option = document.createElement('option');
+                        option.value = salon.nombre;
+                        option.textContent = `${salon.nombre} - ${salon.edificio} (Piso ${salon.piso})`;
+                        resourceSelect.appendChild(option);
+                    });
+
+                    showNotification('Usando salones predeterminados', 'warning');
+                    return;
+                }
+            
+                querySnapshot.forEach(doc => {
+                    try {
+                        const salon = doc.data();
+                        console.log("Procesando salón:", doc.id, salon); // Debug
+
+                        // Validar campos mínimos
+                        if (!salon.nombre) {
+                            console.error("Salón sin nombre:", doc.id);
+                            return;
+                        }
+
+                        const edificio = salon.edificio || "Sin edificio";
+                        const piso = salon.piso !== undefined ? salon.piso : "-";
+                        const capacidad = salon.capacidad || "N/D";
+
+                        const option = document.createElement('option');
+                        option.value = salon.nombre;
+                        option.textContent = `${salon.nombre} - ${edificio} (Piso ${piso}) - Cap. ${capacidad}`;
+                        resourceSelect.appendChild(option);
+
+                    } catch (error) {
+                        console.error("Error procesando salón:", doc.id, error);
+                    }
+                });
+            
+                console.log("Salones cargados correctamente"); // Debug
+
+            } catch (error) {
+                console.error("Error al cargar salones:", error);
+                resourceSelect.innerHTML = '<option value="" disabled>Error al cargar salones</option>';
+                showNotification('Error al cargar salones. Ver consola para detalles.', 'error');
+
+                // Opción de emergencia si falla todo
+                const option = document.createElement('option');
+                option.value = "laboratorio-default";
+                option.textContent = "Laboratorio (default)";
+                resourceSelect.appendChild(option);
+            }
+        }
+        // Función para cargar las materias del docente
+        async function loadMateriasDocente() {
+            try {
+                if (isAdmin) return; // Si es admin, no necesita materias
+                
+                const querySnapshot = await db.collection('materias')
+                    .where('docenteId', '==', currentUser.uid)
+                    .get();
+
+                groupSelect.innerHTML = '<option value="" disabled selected>Seleccione una asignatura...</option>';
+                groupSelect.innerHTML += '<option value="">Ninguna (otro propósito)</option>';
+                
+                if (querySnapshot.empty) {
+                    groupSelect.innerHTML += '<option value="" disabled>No tienes asignaturas asignadas</option>';
+                    return;
+                }
+
+                querySnapshot.forEach(doc => {
+                    const materia = doc.data();
+                    const option = document.createElement('option');
+                    option.value = materia.nombre;
+                    option.textContent = materia.nombre;
+                    if (materia.codigo) {
+                        option.textContent += ` (${materia.codigo})`;
+                    }
+                    groupSelect.appendChild(option);
+                });
+            } catch (error) {
+                console.error("Error al cargar materias:", error);
+                groupSelect.innerHTML = '<option value="" disabled>Error al cargar asignaturas</option>';
+                showNotification('Error al cargar asignaturas', 'error');
+            }
+        }
+
+        // Manejar envío del formulario
+        reservationForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Procesando...';
+            
+            try {
+                // Obtener datos del formulario
+                const reservation = {
+                    resource: document.getElementById('resource').value,
+                    date: document.getElementById('date').value,
+                    startTime: document.getElementById('start-time').value,
+                    endTime: document.getElementById('end-time').value,
+                    purpose: document.getElementById('purpose').value,
+                    group: document.getElementById('group').value || '',
+                    status: 'pending', // Estado por defecto
+                    userId: currentUser.uid,
+                    userEmail: currentUser.email,
+                    userName: currentUser.displayName || currentUser.email.split('@')[0],
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                };
+
+                // Validar horario
+                if (reservation.startTime >= reservation.endTime) {
+                    throw new Error('La hora de fin debe ser posterior a la hora de inicio');
+                }
+
+                // Verificar disponibilidad
+                const querySnapshot = await db.collection('reservaciones')
+                    .where('resource', '==', reservation.resource)
+                    .where('date', '==', reservation.date)
+                    .get();
+
+                let conflict = false;
+                querySnapshot.forEach(doc => {
+                    const existing = doc.data();
+                    if (
+                        (reservation.startTime >= existing.startTime && reservation.startTime < existing.endTime) ||
+                        (reservation.endTime > existing.startTime && reservation.endTime <= existing.endTime) ||
+                        (reservation.startTime <= existing.startTime && reservation.endTime >= existing.endTime)
+                    ) {
+                        conflict = true;
+                    }
+                });
+
+                if (conflict) {
+                    throw new Error('El salón ya está reservado en ese horario');
+                }
+
+                // Guardar en Firestore
+                await db.collection('reservaciones').add(reservation);
+                
+                showNotification('Reservación creada exitosamente', 'success');
+                reservationForm.reset();
+                loadReservations();
+            } catch (error) {
+                console.error('Error al crear reservación:', error);
+                showNotification(error.message || 'Error al crear reservación', 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+            }
+        });
+
+        // Función para cargar reservaciones
+        // Función para cargar reservaciones
+        async function loadReservations() {
+            refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            
+            try {
+                // Cargar todas las reservas (sin filtrar por usuario)
+                const querySnapshot = await db.collection('reservaciones')
+                    .orderBy('createdAt', 'desc')
+                    .get();
+
+                reservationsTable.innerHTML = '';
+                
+                if (querySnapshot.empty) {
+                    reservationsTable.innerHTML = '<tr><td colspan="7" class="empty-state">No hay reservaciones</td></tr>';
+                    return;
+                }
+
+                querySnapshot.forEach(doc => {
+                    const reservation = doc.data();
+                    const row = reservationsTable.insertRow();
+                    
+                    // Formatear fecha
+                    const date = new Date(reservation.date).toLocaleDateString('es-ES', {
+                        weekday: 'short',
+                        day: '2-digit',
+                        month: 'short'
+                    });
+                    
+                    // Formatear horario
+                    const timeRange = `${reservation.startTime} - ${reservation.endTime}`;
+                    
+                    // Estado
+                    let statusBadge;
+                    if (reservation.status === 'approved') {
+                        statusBadge = '<span class="badge badge-success">Aprobada</span>';
+                    } else if (reservation.status === 'rejected') {
+                        statusBadge = '<span class="badge badge-danger">Rechazada</span>';
+                    } else {
+                        statusBadge = '<span class="badge badge-warning">Pendiente</span>';
+                    }
+                    
+                    // Acciones (solo para admin)
+                    let actions = '';
+                    if (isAdmin && reservation.status === 'pending') {
+                        actions = `
+                            <div class="action-buttons">
+                                <button onclick="updateReservationStatus('${doc.id}', 'approved')" class="btn btn-success btn-sm">
+                                    <i class="fas fa-check"></i> Aprobar
+                                </button>
+                                <button onclick="updateReservationStatus('${doc.id}', 'rejected')" class="btn btn-danger btn-sm">
+                                    <i class="fas fa-times"></i> Rechazar
+                                </button>
+                            </div>
+                        `;
+                    } else if (!isAdmin && reservation.userId === currentUser.uid && reservation.status === 'pending') {
+                        actions = `
+                            <button onclick="cancelReservation('${doc.id}')" class="btn btn-warning btn-sm">
+                                <i class="fas fa-trash"></i> Cancelar
+                            </button>
+                        `;
+                    }
+                    
+                    // Llenar la tabla
+                    row.insertCell(0).textContent = reservation.resource;
+                    row.insertCell(1).textContent = date;
+                    row.insertCell(2).textContent = timeRange;
+                    row.insertCell(3).textContent = reservation.purpose;
+                    row.insertCell(4).textContent = reservation.userName || reservation.userEmail;
+                    row.insertCell(5).innerHTML = statusBadge;
+                    row.insertCell(6).innerHTML = actions;
+                });
+            } catch (error) {
+                console.error('Error al cargar reservaciones:', error);
+                showNotification('Error al cargar reservaciones: ' + error.message, 'error');
+                reservationsTable.innerHTML = '<tr><td colspan="7" class="empty-state">Error al cargar</td></tr>';
+            } finally {
+                refreshBtn.innerHTML = '<i class="fas fa-sync-alt"></i>';
+            }
+        }
+
+        // Función para actualizar estado de reserva (solo admin)
+        async function updateReservationStatus(reservationId, status) {
+            try {
+                await db.collection('reservaciones').doc(reservationId).update({
+                    status: status,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                showNotification(`Reservación ${status === 'approved' ? 'aprobada' : 'rechazada'}`, 'success');
+                loadReservations();
+            } catch (error) {
+                console.error('Error al actualizar reservación:', error);
+                showNotification('Error al actualizar reservación', 'error');
+            }
+        }
+
+        // Función para cancelar reserva (solo el propio usuario)
+        async function cancelReservation(reservationId) {
+            if (confirm('¿Estás seguro de que deseas cancelar esta reservación?')) {
+                try {
+                    await db.collection('reservaciones').doc(reservationId).delete();
+                    showNotification('Reservación cancelada', 'success');
+                    loadReservations();
+                } catch (error) {
+                    console.error('Error al cancelar reservación:', error);
+                    showNotification('Error al cancelar reservación', 'error');
+                }
+            }
+        }
+
+        // Botón de actualizar
+        refreshBtn.addEventListener('click', loadReservations);
+
+        // Botón de salir
+        logoutBtn.addEventListener('click', () => {
+            auth.signOut()
+                .then(() => window.location.href = 'login.html')
+                .catch(error => {
+                    console.error('Error al cerrar sesión:', error);
+                    showNotification('Error al cerrar sesión', 'error');
+                });
+        });
+
+        // Mostrar notificación
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = `
+                <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
+                ${message}
+            `;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

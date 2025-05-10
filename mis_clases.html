@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Clases Programadas</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6c5ce7;
+            --primary-light: #a29bfe;
+            --primary-dark: #5649c0;
+            --secondary: #00b894;
+            --danger: #d63031;
+            --warning: #fdcb6e;
+            --dark-1: #121212;
+            --dark-2: #1e1e1e;
+            --dark-3: #2a2a2a;
+            --light-1: #f5f6fa;
+            --light-2: #d2dae2;
+            --light-3: #a4b0be;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            --transition: all 0.3s ease;
+            --gradient: linear-gradient(135deg, var(--primary), var(--secondary));
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--dark-1);
+            color: var(--light-1);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: var(--gradient);
+            padding: 1rem 0;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-icon {
+            font-size: 1.8rem;
+            color: white;
+        }
+
+        .logo-text h1 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-role {
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .logout-btn {
+            background: none;
+            border: none;
+            color: var(--light-1);
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .main {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        .card {
+            background-color: var(--dark-2);
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .card-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--dark-3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .card-icon {
+            color: var(--primary-light);
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            border-radius: 10px;
+            border: 1px solid var(--dark-3);
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            color: var(--light-1);
+            min-width: 800px;
+        }
+
+        .table th {
+            background-color: var(--dark-3);
+            font-weight: 600;
+            text-align: left;
+            padding: 1rem;
+        }
+
+        .table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--dark-3);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.35rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .badge-success {
+            background-color: rgba(0, 184, 148, 0.1);
+            color: var(--secondary);
+            border: 1px solid var(--secondary);
+        }
+
+        .badge-warning {
+            background-color: rgba(253, 203, 110, 0.1);
+            color: var(--warning);
+            border: 1px solid var(--warning);
+        }
+
+        .badge-danger {
+            background-color: rgba(214, 48, 49, 0.1);
+            color: var(--danger);
+            border: 1px solid var(--danger);
+        }
+
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            color: white;
+            font-weight: 500;
+            box-shadow: var(--shadow);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .notification.success {
+            background-color: var(--secondary);
+        }
+
+        .notification.error {
+            background-color: var(--danger);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 2rem;
+            color: var(--light-3);
+        }
+
+        .filter-controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--light-2);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            background-color: var(--dark-3);
+            border: 1px solid var(--dark-3);
+            border-radius: 10px;
+            color: var(--light-1);
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.9rem;
+        }
+
+        select.form-control {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1em;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.8rem 1.5rem;
+            border-radius: 10px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--gradient);
+            color: white;
+        }
+
+        .btn-sm {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.8rem;
+        }
+
+        .btn-icon {
+            background: none;
+            border: none;
+            color: var(--light-2);
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                padding: 0 1rem;
+            }
+            .main {
+                padding: 0 1rem;
+            }
+            .filter-controls {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-calendar-alt"></i>
+                </div>
+                <div class="logo-text">
+                    <h1>Mis Clases Programadas</h1>
+                </div>
+            </div>
+            <div class="user-info">
+                <span id="user-role" class="user-role">Estudiante</span>
+                <div class="user-menu">
+                    <button id="logout-btn" class="logout-btn">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Salir</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main content -->
+    <main class="main">
+        <!-- Filtros -->
+        <section class="card">
+            <div class="card-header">
+                <h2 class="card-title">
+                    <i class="fas fa-filter card-icon"></i>
+                    Filtros
+                </h2>
+            </div>
+            <div class="card-body">
+                <div class="filter-controls">
+                    <div class="filter-group">
+                        <label for="filter-date" class="form-label">Fecha</label>
+                        <input type="date" id="filter-date" class="form-control">
+                    </div>
+                    <div class="filter-group">
+                        <label for="filter-materia" class="form-label">Materia</label>
+                        <select id="filter-materia" class="form-control">
+                            <option value="">Todas las materias</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="filter-estado" class="form-label">Estado</label>
+                        <select id="filter-estado" class="form-control">
+                            <option value="">Todos los estados</option>
+                            <option value="approved">Aprobadas</option>
+                            <option value="pending">Pendientes</option>
+                        </select>
+                    </div>
+                    <div class="filter-group" style="align-self: flex-end;">
+                        <button id="filter-btn" class="btn btn-primary">
+                            <i class="fas fa-search"></i> Filtrar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Listado de clases -->
+        <section class="card">
+            <div class="card-header">
+                <h2 class="card-title">
+                    <i class="fas fa-calendar-check card-icon"></i>
+                    Mis Clases
+                </h2>
+                <button id="refresh-btn" class="btn-icon" title="Actualizar">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Materia</th>
+                                <th>Fecha</th>
+                                <th>Horario</th>
+                                <th>Salón</th>
+                                <th>Docente</th>
+                                <th>Tema</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody id="classes-table">
+                            <tr>
+                                <td colspan="7" class="empty-state">Cargando clases...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Firebase y aplicación -->
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-auth-compat.js"></script>
+    
+    <script>
+        // Configuración de Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyC8JDhWWp1jmqJvbu8s2Dsz0Yg2W0F61_s",
+            authDomain: "reservas-universidad.firebaseapp.com",
+            projectId: "reservas-universidad",
+            storageBucket: "reservas-universidad.appspot.com",
+            messagingSenderId: "1020769094680",
+            appId: "1:1020769094680:web:981ed8ea4a8b63be0b076d"
+        };
+
+        // Inicializar Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+
+        // Referencias del DOM
+        const classesTable = document.getElementById('classes-table');
+        const refreshBtn = document.getElementById('refresh-btn');
+        const logoutBtn = document.getElementById('logout-btn');
+        const filterBtn = document.getElementById('filter-btn');
+        const filterDate = document.getElementById('filter-date');
+        const filterMateria = document.getElementById('filter-materia');
+        const filterEstado = document.getElementById('filter-estado');
+
+        // Variables globales
+        let currentUser = null;
+        let materiasEstudiante = [];
+        let allReservations = [];
+
+        // Cargar datos al iniciar
+        document.addEventListener('DOMContentLoaded', () => {
+            // Verificar autenticación
+            auth.onAuthStateChanged(async user => {
+                if (user) {
+                    currentUser = user;
+                    
+                    // Verificar si es estudiante
+                    try {
+                        const userDoc = await db.collection('users').doc(user.uid).get();
+                        if (userDoc.exists) {
+                            const userData = userDoc.data();
+                            
+                            if (userData.role !== 'estudiante') {
+                                showNotification('Esta página es solo para estudiantes', 'error');
+                                setTimeout(() => {
+                                    window.location.href = 'index.html';
+                                }, 2000);
+                                return;
+                            }
+                            
+                            // Cargar materias del estudiante
+                            if (userData.materias && userData.materias.length > 0) {
+                                materiasEstudiante = userData.materias;
+                                await loadMateriasEstudiante();
+                            }
+                            
+                            // Cargar todas las reservaciones una vez
+                            await loadAllReservations();
+                            // Mostrar clases iniciales
+                            filterAndDisplayClasses();
+                        }
+                    } catch (error) {
+                        console.error("Error al verificar usuario:", error);
+                        showNotification('Error al cargar datos del usuario', 'error');
+                    }
+                } else {
+                    window.location.href = 'login.html';
+                }
+            });
+        });
+
+        // Cargar todas las reservaciones una sola vez
+        async function loadAllReservations() {
+            try {
+                refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                
+                const querySnapshot = await db.collection('reservaciones')
+                    .where('status', 'in', ['approved', 'pending'])
+                    .get();
+                
+                allReservations = [];
+                querySnapshot.forEach(doc => {
+                    allReservations.push(doc.data());
+                });
+                
+                // Ordenar por fecha (más reciente primero)
+                allReservations.sort((a, b) => new Date(b.date) - new Date(a.date));
+                
+            } catch (error) {
+                console.error('Error al cargar reservaciones:', error);
+                showNotification('Error al cargar reservaciones', 'error');
+            } finally {
+                refreshBtn.innerHTML = '<i class="fas fa-sync-alt"></i>';
+            }
+        }
+
+        // Filtrar y mostrar las clases según los filtros seleccionados
+        async function filterAndDisplayClasses() {
+            try {
+                // Obtener valores de los filtros
+                const fechaFiltro = filterDate.value;
+                const materiaFiltro = filterMateria.value;
+                const estadoFiltro = filterEstado.value;
+                
+                // Filtrar localmente
+                let filteredReservations = allReservations.filter(reserva => {
+                    // Filtro por fecha
+                    if (fechaFiltro && reserva.date !== fechaFiltro) return false;
+                    
+                    // Filtro por estado
+                    if (estadoFiltro && reserva.status !== estadoFiltro) return false;
+                    
+                    return true;
+                });
+                
+                // Si hay filtro de materia, necesitamos verificar las materias del estudiante
+                if (materiaFiltro && materiasEstudiante.length > 0) {
+                    // Obtener información de las materias del estudiante
+                    const materiasInfo = await Promise.all(
+                        materiasEstudiante.map(async materiaId => {
+                            const materiaDoc = await db.collection('materias').doc(materiaId).get();
+                            return materiaDoc.exists ? materiaDoc.data() : null;
+                        })
+                    );
+                    
+                    // Filtrar por materia
+                    filteredReservations = filteredReservations.filter(reserva => {
+                        return materiasInfo.some(materia => 
+                            materia && materia.nombre === reserva.tema
+                        );
+                    });
+                }
+                
+                // Ordenar por horaInicio (más temprano primero)
+                filteredReservations.sort((a, b) => {
+                    if (a.horaInicio < b.horaInicio) return -1;
+                    if (a.horaInicio > b.horaInicio) return 1;
+                    return 0;
+                });
+                
+                // Mostrar resultados
+                displayReservations(filteredReservations);
+                
+            } catch (error) {
+                console.error('Error al filtrar clases:', error);
+                showNotification('Error al filtrar clases', 'error');
+            }
+        }
+
+        // Mostrar las reservaciones en la tabla
+        async function displayReservations(reservations) {
+            classesTable.innerHTML = '';
+            
+            if (reservations.length === 0) {
+                classesTable.innerHTML = '<tr><td colspan="7" class="empty-state">No hay clases que coincidan con los filtros</td></tr>';
+                return;
+            }
+            
+            // Obtener información de docentes (optimizado para evitar duplicados)
+            const docentesIds = [...new Set(reservations.map(r => r.userId))];
+            const docentesCache = {};
+            
+            await Promise.all(docentesIds.map(async docenteId => {
+                const docenteDoc = await db.collection('users').doc(docenteId).get();
+                docentesCache[docenteId] = docenteDoc.exists ? 
+                    (docenteDoc.data().name || 'Docente desconocido') : 
+                    'Docente desconocido';
+            }));
+            
+            // Mostrar cada reserva
+            reservations.forEach(reserva => {
+                const fecha = new Date(reserva.date).toLocaleDateString('es-ES', {
+                    weekday: 'short',
+                    day: '2-digit',
+                    month: 'short'
+                });
+                
+                const horario = `${reserva.horaInicio} - ${reserva.horaFin}`;
+                
+                let estadoBadge;
+                if (reserva.status === 'approved') {
+                    estadoBadge = '<span class="badge badge-success">Aprobada</span>';
+                } else {
+                    estadoBadge = '<span class="badge badge-warning">Pendiente</span>';
+                }
+                
+                const row = classesTable.insertRow();
+                row.insertCell(0).textContent = reserva.tema || 'Sin tema';
+                row.insertCell(1).textContent = fecha;
+                row.insertCell(2).textContent = horario;
+                row.insertCell(3).textContent = reserva.salon || 'Sin salón';
+                row.insertCell(4).textContent = docentesCache[reserva.userId] || reserva.userName || 'Docente desconocido';
+                row.insertCell(5).textContent = reserva.tema || 'Sin tema';
+                row.insertCell(6).innerHTML = estadoBadge;
+            });
+        }
+
+        // Cargar las materias del estudiante en el filtro
+        async function loadMateriasEstudiante() {
+            try {
+                filterMateria.innerHTML = '<option value="">Todas las materias</option>';
+                
+                // Obtener detalles de cada materia
+                const materiasPromises = materiasEstudiante.map(async materiaId => {
+                    const materiaDoc = await db.collection('materias').doc(materiaId).get();
+                    if (materiaDoc.exists) {
+                        return materiaDoc.data();
+                    }
+                    return null;
+                });
+                
+                const materiasData = await Promise.all(materiasPromises);
+                
+                // Filtrar materias válidas y agregar al select
+                materiasData.filter(m => m !== null).forEach(materia => {
+                    const option = document.createElement('option');
+                    option.value = materia.nombre;
+                    option.textContent = materia.nombre;
+                    if (materia.codigo) {
+                        option.textContent += ` (${materia.codigo})`;
+                    }
+                    filterMateria.appendChild(option);
+                });
+                
+            } catch (error) {
+                console.error("Error al cargar materias del estudiante:", error);
+                showNotification('Error al cargar materias', 'error');
+            }
+        }
+
+        // Botón de actualizar
+        refreshBtn.addEventListener('click', async () => {
+            await loadAllReservations();
+            filterAndDisplayClasses();
+        });
+        
+        // Botón de filtrar
+        filterBtn.addEventListener('click', filterAndDisplayClasses);
+
+        // Botón de salir
+        logoutBtn.addEventListener('click', () => {
+            auth.signOut()
+                .then(() => window.location.href = 'login.html')
+                .catch(error => {
+                    console.error('Error al cerrar sesión:', error);
+                    showNotification('Error al cerrar sesión', 'error');
+                });
+        });
+
+        // Mostrar notificación
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = `
+                <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
+                ${message}
+            `;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

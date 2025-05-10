@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asignación de Estudiantes</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Estilos idénticos a tus páginas anteriores */
+        :root {
+            --primary: #6c5ce7;
+            --primary-light: #a29bfe;
+            --primary-dark: #5649c0;
+            --secondary: #00b894;
+            --danger: #d63031;
+            --warning: #fdcb6e;
+            --dark-1: #121212;
+            --dark-2: #1e1e1e;
+            --dark-3: #2a2a2a;
+            --light-1: #f5f6fa;
+            --light-2: #d2dae2;
+            --light-3: #a4b0be;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            --transition: all 0.3s ease;
+            --gradient: linear-gradient(135deg, var(--primary), var(--secondary));
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--dark-1);
+            color: var(--light-1);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: var(--gradient);
+            padding: 1rem 0;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-icon {
+            font-size: 1.8rem;
+            color: white;
+        }
+
+        .logo-text h1 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-role {
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .logout-btn {
+            background: none;
+            border: none;
+            color: var(--light-1);
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .main {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        .card {
+            background-color: var(--dark-2);
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .card-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--dark-3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .card-icon {
+            color: var(--primary-light);
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.25rem;
+        }
+
+        @media (min-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--light-2);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            background-color: var(--dark-3);
+            border: 1px solid var(--dark-3);
+            border-radius: 10px;
+            color: var(--light-1);
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.9rem;
+        }
+
+        select.form-control {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1em;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.8rem 1.5rem;
+            border-radius: 10px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--gradient);
+            color: white;
+        }
+
+        .btn-sm {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.8rem;
+        }
+
+        .btn-success {
+            background-color: var(--secondary);
+            color: white;
+        }
+
+        .btn-danger {
+            background-color: var(--danger);
+            color: white;
+        }
+
+        .btn-warning {
+            background-color: var(--warning);
+            color: var(--dark-1);
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            border-radius: 10px;
+            border: 1px solid var(--dark-3);
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            color: var(--light-1);
+            min-width: 800px;
+        }
+
+        .table th {
+            background-color: var(--dark-3);
+            font-weight: 600;
+            text-align: left;
+            padding: 1rem;
+        }
+
+        .table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--dark-3);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.35rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .badge-success {
+            background-color: rgba(0, 184, 148, 0.1);
+            color: var(--secondary);
+            border: 1px solid var(--secondary);
+        }
+
+        .badge-warning {
+            background-color: rgba(253, 203, 110, 0.1);
+            color: var(--warning);
+            border: 1px solid var(--warning);
+        }
+
+        .badge-danger {
+            background-color: rgba(214, 48, 49, 0.1);
+            color: var(--danger);
+            border: 1px solid var(--danger);
+        }
+
+        .badge-primary {
+            background-color: rgba(108, 92, 231, 0.1);
+            color: var(--primary);
+            border: 1px solid var(--primary);
+        }
+
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            color: white;
+            font-weight: 500;
+            box-shadow: var(--shadow);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .notification.success {
+            background-color: var(--secondary);
+        }
+
+        .notification.error {
+            background-color: var(--danger);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 2rem;
+            color: var(--light-3);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: var(--dark-2);
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--light-3);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .student-chip {
+            display: inline-flex;
+            align-items: center;
+            background-color: var(--dark-3);
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            margin: 0.2rem;
+            font-size: 0.85rem;
+        }
+
+        .student-chip button {
+            background: none;
+            border: none;
+            color: var(--light-3);
+            margin-left: 0.5rem;
+            cursor: pointer;
+        }
+
+        .student-chip button:hover {
+            color: var(--danger);
+        }
+
+        .chips-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                padding: 0 1rem;
+            }
+            .main {
+                padding: 0 1rem;
+            }
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="logo-text">
+                    <h1>Asignación de Estudiantes</h1>
+                </div>
+            </div>
+            <div class="user-info">
+                <span id="user-role" class="user-role">Administrador</span>
+                <div class="user-menu">
+                    <button id="logout-btn" class="logout-btn">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Salir</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main content -->
+    <main class="main">
+        <!-- Formulario de Asignación -->
+        <section class="card">
+            <div class="card-header">
+                <h2 class="card-title">
+                    <i class="fas fa-user-plus card-icon"></i>
+                    Asignar Estudiantes
+                </h2>
+            </div>
+            <div class="card-body">
+                <form id="asignacion-form">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="select-materia" class="form-label">Materia</label>
+                            <select id="select-materia" class="form-control" required>
+                                <option value="">Seleccione una materia...</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="select-estudiante" class="form-label">Estudiante</label>
+                            <select id="select-estudiante" class="form-control" required>
+                                <option value="">Seleccione un estudiante...</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 1.5rem; display: flex; justify-content: flex-end;">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Asignar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- Listado de Asignaciones -->
+        <section class="card">
+            <div class="card-header">
+                <h2 class="card-title">
+                    <i class="fas fa-list card-icon"></i>
+                    Asignaciones Actuales
+                </h2>
+                <button id="refresh-btn" class="btn-icon" title="Actualizar">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="form-group">
+                    <label for="filter-materia" class="form-label">Filtrar por materia:</label>
+                    <select id="filter-materia" class="form-control">
+                        <option value="">Todas las materias</option>
+                    </select>
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Materia</th>
+                                <th>Estudiantes</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="asignaciones-table">
+                            <tr>
+                                <td colspan="3" class="empty-state">Cargando asignaciones...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal para confirmación -->
+    <div id="confirm-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="confirm-modal-title">Confirmar acción</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="confirm-modal-message">¿Está seguro que desea realizar esta acción?</p>
+            </div>
+            <div style="margin-top: 1.5rem; display: flex; justify-content: flex-end; gap: 0.5rem;">
+                <button id="confirm-cancel" class="btn btn-danger">Cancelar</button>
+                <button id="confirm-ok" class="btn btn-primary">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase y aplicación -->
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-auth-compat.js"></script>
+    
+<script>
+        // Configuración de Firebase (usando la misma que en tus otras páginas)
+        const firebaseConfig = {
+            apiKey: "AIzaSyC8JDhWWp1jmqJvbu8s2Dsz0Yg2W0F61_s",
+            authDomain: "reservas-universidad.firebaseapp.com",
+            projectId: "reservas-universidad",
+            storageBucket: "reservas-universidad.appspot.com",
+            messagingSenderId: "1020769094680",
+            appId: "1:1020769094680:web:981ed8ea4a8b63be0b076d"
+        };
+
+        // Inicializar Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+
+        // Referencias del DOM
+        const asignacionForm = document.getElementById('asignacion-form');
+        const selectMateria = document.getElementById('select-materia');
+        const selectEstudiante = document.getElementById('select-estudiante');
+        const filterMateria = document.getElementById('filter-materia');
+        const asignacionesTable = document.getElementById('asignaciones-table');
+        const refreshBtn = document.getElementById('refresh-btn');
+        const logoutBtn = document.getElementById('logout-btn');
+        const userRoleSpan = document.getElementById('user-role');
+        const confirmModal = document.getElementById('confirm-modal');
+
+        // Variables globales
+        let currentUser = null;
+        let isAdmin = false;
+        let materias = [];
+        let estudiantes = [];
+        let asignaciones = {};
+
+        // Inicializar la aplicación
+        document.addEventListener('DOMContentLoaded', () => {
+            auth.onAuthStateChanged(async user => {
+                if (user) {
+                    currentUser = user;
+                    await checkAdminRole();
+                    loadMaterias();
+                    loadEstudiantes();
+                    loadAsignaciones();
+                } else {
+                    window.location.href = 'login.html';
+                }
+            });
+
+            // Configurar eventos
+            setupEventListeners();
+        });
+
+        // Verificar si el usuario es admin
+        async function checkAdminRole() {
+            try {
+                const userDoc = await db.collection('users').doc(currentUser.uid).get();
+                if (userDoc.exists) {
+                    const userData = userDoc.data();
+                    isAdmin = userData.role === 'admin';
+                    userRoleSpan.textContent = isAdmin ? 'Administrador' : 'Docente';
+                    
+                    if (!isAdmin) {
+                        showNotification('No tienes permisos para acceder a esta página', 'error');
+                        setTimeout(() => window.location.href = 'app.html', 2000);
+                    }
+                }
+            } catch (error) {
+                console.error("Error al verificar rol:", error);
+                showNotification('Error al verificar permisos', 'error');
+            }
+        }
+
+        // Cargar materias para los selects
+        async function loadMaterias() {
+            try {
+                const querySnapshot = await db.collection('materias')
+                    .orderBy('nombre')
+                    .get();
+                
+                materias = [];
+                selectMateria.innerHTML = '<option value="">Seleccione una materia...</option>';
+                filterMateria.innerHTML = '<option value="">Todas las materias</option>';
+                
+                querySnapshot.forEach(doc => {
+                    const materia = { 
+                        id: doc.id, 
+                        nombre: doc.data().nombre,
+                        codigo: doc.data().codigo,
+                        programaId: doc.data().programaId,
+                        docenteId: doc.data().docenteId
+                    };
+                    materias.push(materia);
+                    
+                    // Para select de asignación
+                    const option = document.createElement('option');
+                    option.value = materia.id;
+                    option.textContent = `${materia.nombre} (${materia.codigo})`;
+                    selectMateria.appendChild(option.cloneNode(true));
+                    
+                    // Para select de filtro
+                    filterMateria.appendChild(option);
+                });
+            } catch (error) {
+                console.error("Error al cargar materias:", error);
+                showNotification('Error al cargar materias', 'error');
+            }
+        }
+
+        // Cargar estudiantes (actualizada para tu estructura de datos)
+        async function loadEstudiantes() {
+    try {
+        // Primero obtenemos todos los estudiantes sin filtrar por 'active'
+        let querySnapshot = await db.collection('users')
+            .where('role', '==', 'estudiante')
+            .get();
+        
+        estudiantes = [];
+        selectEstudiante.innerHTML = '<option value="">Seleccione un estudiante...</option>';
+        
+        querySnapshot.forEach(doc => {
+            const estudianteData = doc.data();
+            
+            // Verificar si el estudiante está activo (si no tiene el campo, asumimos true)
+            const isActive = estudianteData.active !== false;
+            
+            if (isActive) {
+                const estudiante = {
+                    id: doc.id,
+                    name: estudianteData.name || estudianteData.email.split('@')[0],
+                    email: estudianteData.email,
+                    active: estudianteData.active !== false,
+                    createdAt: estudianteData.createdAt,
+                    role: estudianteData.role,
+                    materias: estudianteData.materias || []
+                };
+                
+                estudiantes.push(estudiante);
+                
+                const option = document.createElement('option');
+                option.value = estudiante.id;
+                option.textContent = estudiante.name;
+                if (estudiante.email) {
+                    option.textContent += ` (${estudiante.email})`;
+                }
+                selectEstudiante.appendChild(option);
+            }
+        });
+        
+        // Ordenar estudiantes alfabéticamente por nombre
+        estudiantes.sort((a, b) => {
+            const nameA = a.name.toUpperCase();
+            const nameB = b.name.toUpperCase();
+            return nameA.localeCompare(nameB);
+        });
+        
+        // Reconstruir el select con el orden correcto
+        selectEstudiante.innerHTML = '<option value="">Seleccione un estudiante...</option>';
+        estudiantes.forEach(estudiante => {
+            const option = document.createElement('option');
+            option.value = estudiante.id;
+            option.textContent = estudiante.name;
+            if (estudiante.email) {
+                option.textContent += ` (${estudiante.email})`;
+            }
+            selectEstudiante.appendChild(option);
+        });
+        
+    } catch (error) {
+        console.error("Error al cargar estudiantes:", error);
+        showNotification('Error al cargar estudiantes', 'error');
+    }
+}
+
+        // Cargar asignaciones (actualizada para tu estructura)
+        async function loadAsignaciones() {
+            try {
+                // Objeto para agrupar asignaciones por materia
+                asignaciones = {};
+                
+                // Inicializar con todas las materias
+                materias.forEach(materia => {
+                    asignaciones[materia.id] = {
+                        nombre: materia.nombre,
+                        estudiantes: []
+                    };
+                });
+
+                // Cargar estudiantes con sus materias asignadas
+                const querySnapshot = await db.collection('users')
+                    .where('role', '==', 'estudiante')
+                    .where('active', '==', true)
+                    .get();
+
+                querySnapshot.forEach(doc => {
+                    const estudianteData = doc.data();
+                    if (estudianteData.materias && Array.isArray(estudianteData.materias)) {
+                        estudianteData.materias.forEach(materiaId => {
+                            if (asignaciones[materiaId]) {
+                                asignaciones[materiaId].estudiantes.push({
+                                    id: doc.id,
+                                    nombre: estudianteData.name || estudianteData.email.split('@')[0],
+                                    email: estudianteData.email
+                                });
+                            }
+                        });
+                    }
+                });
+
+                // Actualizar la tabla
+                updateAsignacionesTable(filterMateria.value);
+
+            } catch (error) {
+                console.error("Error al cargar asignaciones:", error);
+                showNotification('Error al cargar asignaciones', 'error');
+                asignacionesTable.innerHTML = '<tr><td colspan="3" class="empty-state">Error al cargar asignaciones</td></tr>';
+            }
+        }
+
+        // Actualizar la tabla de asignaciones
+        function updateAsignacionesTable(filterMateriaId = '') {
+            asignacionesTable.innerHTML = '';
+            
+            let hasData = false;
+            
+            for (const materiaId in asignaciones) {
+                const materia = asignaciones[materiaId];
+                
+                // Aplicar filtro si existe
+                if (filterMateriaId && materiaId !== filterMateriaId) {
+                    continue;
+                }
+                
+                hasData = true;
+                
+                const row = asignacionesTable.insertRow();
+                
+                // Columna Materia
+                const materiaCell = row.insertCell(0);
+                const materiaInfo = materias.find(m => m.id === materiaId);
+                materiaCell.textContent = `${materia.nombre}${materiaInfo ? ` (${materiaInfo.codigo})` : ''}`;
+                
+                // Columna Estudiantes
+                const estudiantesCell = row.insertCell(1);
+                if (materia.estudiantes.length === 0) {
+                    estudiantesCell.textContent = 'No hay estudiantes asignados';
+                    estudiantesCell.style.color = 'var(--light-3)';
+                } else {
+                    const chipsContainer = document.createElement('div');
+                    chipsContainer.className = 'chips-container';
+                    
+                    materia.estudiantes.forEach(estudiante => {
+                        const chip = document.createElement('div');
+                        chip.className = 'student-chip';
+                        chip.innerHTML = `
+                            ${estudiante.nombre}${estudiante.email ? ` (${estudiante.email})` : ''}
+                            <button onclick="removeAsignacion('${materiaId}', '${estudiante.id}', '${estudiante.nombre}')">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        `;
+                        chipsContainer.appendChild(chip);
+                    });
+                    
+                    estudiantesCell.appendChild(chipsContainer);
+                }
+                
+                // Columna Acciones
+                const actionsCell = row.insertCell(2);
+                actionsCell.innerHTML = `
+                    <button onclick="showAddStudentsModal('${materiaId}', '${materia.nombre}')" class="btn btn-primary btn-sm">
+                        <i class="fas fa-user-plus"></i> Agregar
+                    </button>
+                `;
+            }
+            
+            if (!hasData) {
+                asignacionesTable.innerHTML = '<tr><td colspan="3" class="empty-state">No hay asignaciones para mostrar</td></tr>';
+            }
+        }
+
+        // Mostrar modal para agregar estudiantes a una materia específica
+        function showAddStudentsModal(materiaId, materiaNombre) {
+            selectMateria.value = materiaId;
+            selectMateria.disabled = true;
+            
+            showNotification(`Seleccione estudiantes para agregar a ${materiaNombre}`, 'success');
+            
+            // Desplazarse al formulario
+            document.getElementById('asignacion-form').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Eliminar asignación
+        async function removeAsignacion(materiaId, estudianteId, estudianteNombre) {
+            try {
+                const confirm = await showConfirmModal(
+                    `¿Eliminar a ${estudianteNombre} de esta materia?`,
+                    'Esta acción no afectará otros registros del estudiante.'
+                );
+                
+                if (!confirm) return;
+                
+                // 1. Quitar la materia del array de materias del estudiante
+                const estudianteDoc = await db.collection('users').doc(estudianteId).get();
+                if (estudianteDoc.exists) {
+                    const estudianteData = estudianteDoc.data();
+                    const nuevasMaterias = estudianteData.materias ? 
+                        estudianteData.materias.filter(id => id !== materiaId) : [];
+                    
+                    await db.collection('users').doc(estudianteId).update({
+                        materias: nuevasMaterias
+                    });
+                    
+                    // 2. Actualizar la vista
+                    asignaciones[materiaId].estudiantes = asignaciones[materiaId].estudiantes
+                        .filter(e => e.id !== estudianteId);
+                    
+                    updateAsignacionesTable(filterMateria.value);
+                    showNotification('Asignación eliminada correctamente', 'success');
+                }
+            } catch (error) {
+                console.error("Error al eliminar asignación:", error);
+                showNotification('Error al eliminar asignación', 'error');
+            }
+        }
+
+        // Configurar event listeners
+        function setupEventListeners() {
+            // Formulario de asignación
+            asignacionForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                const materiaId = selectMateria.value;
+                const estudianteId = selectEstudiante.value;
+                
+                if (!materiaId || !estudianteId) {
+                    showNotification('Debe seleccionar una materia y un estudiante', 'error');
+                    return;
+                }
+                
+                try {
+                    // 1. Agregar la materia al array de materias del estudiante
+                    const estudianteDoc = await db.collection('users').doc(estudianteId).get();
+                    if (estudianteDoc.exists) {
+                        const estudianteData = estudianteDoc.data();
+                        const materiasActuales = estudianteData.materias || [];
+                        
+                        // Evitar duplicados
+                        if (materiasActuales.includes(materiaId)) {
+                            showNotification('Este estudiante ya está asignado a esta materia', 'warning');
+                            return;
+                        }
+                        
+                        await db.collection('users').doc(estudianteId).update({
+                            materias: [...materiasActuales, materiaId]
+                        });
+                        
+                        // 2. Actualizar la vista
+                        const estudianteNombre = estudianteData.name || estudianteData.email.split('@')[0];
+                        
+                        if (!asignaciones[materiaId]) {
+                            const materiaDoc = await db.collection('materias').doc(materiaId).get();
+                            asignaciones[materiaId] = {
+                                nombre: materiaDoc.data().nombre,
+                                estudiantes: []
+                            };
+                        }
+                        
+                        asignaciones[materiaId].estudiantes.push({
+                            id: estudianteId,
+                            nombre: estudianteNombre,
+                            email: estudianteData.email
+                        });
+                        
+                        updateAsignacionesTable(filterMateria.value);
+                        showNotification('Estudiante asignado correctamente', 'success');
+                        
+                        // Resetear formulario
+                        selectEstudiante.value = '';
+                        if (selectMateria.disabled) {
+                            selectMateria.disabled = false;
+                        }
+                    }
+                } catch (error) {
+                    console.error("Error al asignar estudiante:", error);
+                    showNotification('Error al asignar estudiante', 'error');
+                }
+            });
+            
+            // Filtro por materia
+            filterMateria.addEventListener('change', () => {
+                updateAsignacionesTable(filterMateria.value);
+            });
+            
+            // Botón de actualizar
+            refreshBtn.addEventListener('click', () => {
+                loadAsignaciones();
+                showNotification('Asignaciones actualizadas', 'success');
+            });
+            
+            // Botón de salir
+            logoutBtn.addEventListener('click', () => {
+                auth.signOut()
+                    .then(() => window.location.href = 'login.html')
+                    .catch(error => {
+                        console.error('Error al cerrar sesión:', error);
+                        showNotification('Error al cerrar sesión', 'error');
+                    });
+            });
+            
+            // Modal de confirmación
+            document.getElementById('confirm-cancel').addEventListener('click', () => {
+                confirmModal.style.display = 'none';
+            });
+            
+            document.querySelectorAll('.modal-close').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    confirmModal.style.display = 'none';
+                });
+            });
+        }
+
+        // Mostrar modal de confirmación
+        function showConfirmModal(title, message) {
+            return new Promise((resolve) => {
+                document.getElementById('confirm-modal-title').textContent = title;
+                document.getElementById('confirm-modal-message').textContent = message;
+                confirmModal.style.display = 'flex';
+                
+                document.getElementById('confirm-ok').onclick = () => {
+                    confirmModal.style.display = 'none';
+                    resolve(true);
+                };
+                
+                document.getElementById('confirm-cancel').onclick = () => {
+                    confirmModal.style.display = 'none';
+                    resolve(false);
+                };
+            });
+        }
+
+        // Mostrar notificación
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = `
+                <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
+                ${message}
+            `;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        // Funciones globales necesarias para los eventos en los chips
+        window.removeAsignacion = removeAsignacion;
+        window.showAddStudentsModal = showAddStudentsModal;
+    </script>
+</body>
+</html>

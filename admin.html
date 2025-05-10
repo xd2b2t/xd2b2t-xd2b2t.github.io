@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administración</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6c5ce7;
+            --primary-light: #a29bfe;
+            --primary-dark: #5649c0;
+            --secondary: #00b894;
+            --danger: #d63031;
+            --warning: #fdcb6e;
+            --dark-1: #121212;
+            --dark-2: #1e1e1e;
+            --dark-3: #2a2a2a;
+            --light-1: #f5f6fa;
+            --light-2: #d2dae2;
+            --light-3: #a4b0be;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            --transition: all 0.3s ease;
+            --gradient: linear-gradient(135deg, var(--primary), var(--secondary));
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--dark-1);
+            color: var(--light-1);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            padding: 1rem 0;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(108, 92, 231, 0.4);
+        }
+
+        .logo-icon i {
+            font-size: 1.2rem;
+            color: white;
+        }
+
+        .logo-text h1 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .nav-link {
+            color: var(--light-2);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            position: relative;
+            padding: 0.5rem 0;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: white;
+        }
+
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: white;
+            border-radius: 2px;
+        }
+
+        .nav-link i {
+            font-size: 0.9rem;
+        }
+
+        /* Main content */
+        .main {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        /* Cards */
+        .card {
+            background-color: var(--dark-2);
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            transition: var(--transition);
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            position: relative;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: var(--gradient);
+            z-index: -1;
+            border-radius: 18px;
+            opacity: 0.3;
+            filter: blur(10px);
+        }
+
+        .card-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--dark-3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--light-1);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .card-icon {
+            color: var(--primary);
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        /* Form */
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--light-2);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            background-color: var(--dark-3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: var(--light-1);
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.2);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.8rem 1.5rem;
+            border-radius: 10px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            gap: 0.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background: var(--gradient);
+            color: white;
+            box-shadow: 0 4px 15px rgba(108, 92, 231, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, var(--primary-dark), var(--secondary));
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(108, 92, 231, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.5s;
+        }
+
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+
+        .btn-icon {
+            background: none;
+            border: none;
+            color: var(--light-3);
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 0.5rem;
+            border-radius: 6px;
+            transition: var(--transition);
+        }
+
+        .btn-icon:hover {
+            color: var(--primary);
+            background-color: rgba(108, 92, 231, 0.1);
+        }
+
+        /* Table */
+        .table-responsive {
+            overflow-x: auto;
+            border-radius: 10px;
+            border: 1px solid var(--dark-3);
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            color: var(--light-1);
+            min-width: 800px;
+        }
+
+        .table th {
+            background-color: var(--dark-3);
+            font-weight: 600;
+            text-align: left;
+            padding: 1rem;
+            position: sticky;
+            top: 0;
+        }
+
+        .table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--dark-3);
+        }
+
+        .table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .table tr:hover {
+            background-color: rgba(108, 92, 231, 0.05);
+        }
+
+        /* Badges */
+        .badge {
+            display: inline-block;
+            padding: 0.35rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .badge-primary {
+            background-color: rgba(108, 92, 231, 0.1);
+            color: var(--primary);
+            border: 1px solid var(--primary);
+        }
+
+        .badge-success {
+            background-color: rgba(0, 184, 148, 0.1);
+            color: var(--secondary);
+            border: 1px solid var(--secondary);
+        }
+
+        .badge-warning {
+            background-color: rgba(253, 203, 110, 0.1);
+            color: var(--warning);
+            border: 1px solid var(--warning);
+        }
+
+        .badge-danger {
+            background-color: rgba(214, 48, 49, 0.1);
+            color: var(--danger);
+            border: 1px solid var(--danger);
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 2rem;
+            color: var(--light-3);
+        }
+
+        /* Notifications */
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            color: white;
+            font-weight: 500;
+            box-shadow: var(--shadow);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transform: translateY(100px);
+            opacity: 0;
+            animation: slideIn 0.3s forwards;
+            backdrop-filter: blur(10px);
+            background-color: rgba(0, 0, 0, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .notification i {
+            font-size: 1.1rem;
+        }
+
+        .notification.success {
+            border-left: 4px solid var(--secondary);
+        }
+
+        .notification.error {
+            border-left: 4px solid var(--danger);
+        }
+
+        .notification.warning {
+            border-left: 4px solid var(--warning);
+        }
+
+        .fade-out {
+            animation: fadeOut 0.3s forwards;
+        }
+
+        /* Loading overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 5px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s linear infinite;
+            margin-bottom: 1rem;
+        }
+
+        .loading-text {
+            color: var(--light-1);
+            font-size: 1rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes slideIn {
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes fadeOut {
+            to { opacity: 0; transform: translateY(-50px); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 1rem;
+            }
+            
+            .nav-links {
+                width: 100%;
+                justify-content: space-between;
+                gap: 0.5rem;
+            }
+            
+            .main {
+                padding: 0 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading overlay (inicialmente oculto) -->
+    <div id="loading-overlay" class="loading-overlay" style="display: none;">
+        <div class="loading-spinner"></div>
+        <p class="loading-text">Verificando permisos...</p>
+    </div>
+
+    <!-- Header (inicialmente oculto hasta verificar permisos) -->
+    <header class="header" id="main-header" style="display: none;">
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-user-shield"></i>
+                </div>
+                <div class="logo-text">
+                    <h1>Panel de Administración</h1>
+                </div>
+            </div>
+            
+            <div class="nav-links">
+                <a href="admin.html" class="nav-link active">
+                    <i class="fas fa-users"></i> Usuarios
+                </a>
+                <a href="app.html" class="nav-link">
+                    <i class="fas fa-calendar-alt"></i> Reservas
+                </a>
+                <a href="materias.html" class="nav-link">
+                    <i class="fas fa-calendar-alt"></i> Materias
+                </a>
+                <a href="salones.html" class="nav-link">
+                    <i class="fas fa-calendar-alt"></i> Salones
+                </a>
+                <a href="asignaciones.html" class="nav-link">
+                    <i class="fas fa-calendar-alt"></i> asignaciones
+                </a>
+                <a href="#" id="logout-btn" class="nav-link">
+                    <i class="fas fa-sign-out-alt"></i> Salir
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main content (inicialmente oculto hasta verificar permisos) -->
+    <main class="main" id="main-content" style="display: none;">
+        <!-- Crear nuevo usuario -->
+        <section class="card">
+            <div class="card-header">
+                <h2 class="card-title">
+                    <i class="fas fa-user-plus card-icon"></i>
+                    Crear Nuevo Usuario
+                </h2>
+            </div>
+            <div class="card-body">
+                <form id="user-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="user-name" class="form-label">Nombre Completo</label>
+                            <input type="text" id="user-name" class="form-control" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="user-email" class="form-label">Correo Institucional</label>
+                            <input type="email" id="user-email" class="form-control" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="user-password" class="form-label">Contraseña Temporal</label>
+                            <input type="password" id="user-password" class="form-control" required minlength="6">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="user-role" class="form-label">Rol</label>
+                            <select id="user-role" class="form-control" required>
+                                <option value="">Seleccionar rol</option>
+                                <option value="admin">Administrador</option>
+                                <option value="docente">Docente</option>
+                                <option value="estudiante">Estudiante</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 1.5rem; display: flex; justify-content: flex-end;">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Crear Usuario
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- Listado de usuarios -->
+        <section class="card">
+            <div class="card-header">
+                <h2 class="card-title">
+                    <i class="fas fa-users card-icon"></i>
+                    Usuarios Registrados
+                </h2>
+                <button id="refresh-users" class="btn-icon" title="Actualizar">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Correo</th>
+                                <th>Rol</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="users-table">
+                            <tr class="empty-state">
+                                <td colspan="5">Cargando usuarios...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Firebase y aplicación -->
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-auth-compat.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    
+    <script>
+        // Configuración de Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyC8JDhWWp1jmqJvbu8s2Dsz0Yg2W0F61_s",
+            authDomain: "reservas-universidad.firebaseapp.com",
+            projectId: "reservas-universidad",
+            storageBucket: "reservas-universidad.appspot.com",
+            messagingSenderId: "1020769094680",
+            appId: "1:1020769094680:web:981ed8ea4a8b63be0b076d"
+        };
+
+        // Inicializar Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+
+        // Mostrar loading overlay
+        document.getElementById('loading-overlay').style.display = 'flex';
+
+        // Observador de autenticación
+        auth.onAuthStateChanged(async user => {
+            if (user) {
+                try {
+                    // Verificar rol de administrador
+                    const userDoc = await db.collection('users').doc(user.uid).get();
+                    
+                    if (userDoc.exists && userDoc.data().role === 'admin') {
+                        // Usuario es admin, mostrar contenido
+                        document.getElementById('main-header').style.display = 'block';
+                        document.getElementById('main-content').style.display = 'block';
+                        initAdminPanel();
+                    } else {
+                        // Usuario no es admin, mostrar acceso denegado
+                        showAccessDenied();
+                    }
+                } catch (error) {
+                    console.error("Error al verificar rol:", error);
+                    showNotification('Error al verificar permisos', 'error');
+                    setTimeout(() => window.location.href = 'login.html', 2000);
+                }
+            } else {
+                // Usuario no autenticado, redirigir a login
+                window.location.href = 'login.html';
+            }
+            
+            // Ocultar loading overlay
+            document.getElementById('loading-overlay').style.display = 'none';
+        });
+
+        // Mostrar pantalla de acceso denegado
+        function showAccessDenied() {
+            document.body.innerHTML = `
+                <div style="display: flex; justify-content: center; align-items: center; height: 100vh; flex-direction: column; text-align: center; padding: 2rem; background: var(--dark-1); color: var(--light-1);">
+                    <div style="font-size: 5rem; color: var(--danger); margin-bottom: 1.5rem;">
+                        <i class="fas fa-ban"></i>
+                    </div>
+                    <h2 style="font-size: 1.8rem; margin-bottom: 1rem;">Acceso Denegado</h2>
+                    <p style="color: var(--light-3); margin-bottom: 2rem; max-width: 500px;">
+                        No tienes permisos para acceder al panel de administración. Solo los usuarios con rol de administrador pueden acceder a esta sección.
+                    </p>
+                    <a href="app.html" style="background: var(--primary); color: white; padding: 0.8rem 1.5rem; border-radius: 10px; text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem;">
+                        <i class="fas fa-arrow-left"></i> Volver al sistema
+                    </a>
+                </div>
+            `;
+        }
+
+        // Inicializar panel de administración
+        function initAdminPanel() {
+            // Referencias del DOM
+            const userForm = document.getElementById('user-form');
+            const usersTable = document.getElementById('users-table');
+            const refreshBtn = document.getElementById('refresh-users');
+            const logoutBtn = document.getElementById('logout-btn');
+
+            // Cargar usuarios inicialmente
+            loadUsers();
+
+            // Event listeners
+            userForm.addEventListener('submit', handleUserCreate);
+            refreshBtn.addEventListener('click', () => {
+                loadUsers();
+                showNotification('Lista de usuarios actualizada', 'success');
+            });
+            logoutBtn.addEventListener('click', handleLogout);
+
+            // Función para cargar usuarios
+            async function loadUsers() {
+                refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                usersTable.innerHTML = '<tr class="empty-state"><td colspan="5">Cargando usuarios...</td></tr>';
+                
+                try {
+                    const querySnapshot = await db.collection('users')
+                        .orderBy('createdAt', 'desc')
+                        .get();
+                    
+                    usersTable.innerHTML = '';
+                    
+                    if (querySnapshot.empty) {
+                        usersTable.innerHTML = '<tr class="empty-state"><td colspan="5">No hay usuarios registrados</td></tr>';
+                        return;
+                    }
+                    
+                    querySnapshot.forEach(doc => {
+                        const user = doc.data();
+                        const row = usersTable.insertRow();
+                        
+                        // Nombre
+                        row.insertCell(0).textContent = user.name || 'Sin nombre';
+                        
+                        // Correo
+                        row.insertCell(1).textContent = user.email;
+                        
+                        // Rol
+                        const roleCell = row.insertCell(2);
+                        if (user.role === 'admin') {
+                            roleCell.innerHTML = '<span class="badge badge-primary">Administrador</span>';
+                        } else if (user.role === 'docente') {
+                            roleCell.innerHTML = '<span class="badge badge-success">Docente</span>';
+                        } else {
+                            roleCell.innerHTML = '<span class="badge">Estudiante</span>';
+                        }
+                        
+                        // Estado
+                        const statusCell = row.insertCell(3);
+                        if (user.active === false) {
+                            statusCell.innerHTML = '<span class="badge badge-danger">Inactivo</span>';
+                        } else if (user.emailVerified) {
+                            statusCell.innerHTML = '<span class="badge badge-success">Activo (verificado)</span>';
+                        } else {
+                            statusCell.innerHTML = '<span class="badge badge-warning">Pendiente verificación</span>';
+                        }
+                        
+                        // Acciones
+                        const actionsCell = row.insertCell(4);
+                        actionsCell.style.display = 'flex';
+                        actionsCell.style.gap = '0.5rem';
+                        
+                        // Botón eliminar (no permitir auto-eliminación)
+                        if (doc.id !== auth.currentUser.uid) {
+                            const deleteBtn = document.createElement('button');
+                            deleteBtn.className = 'btn-icon';
+                            deleteBtn.title = 'Eliminar usuario';
+                            deleteBtn.innerHTML = '<i class="fas fa-trash"></i>';
+                            deleteBtn.addEventListener('click', () => deleteUser(doc.id, user.email));
+                            actionsCell.appendChild(deleteBtn);
+                        }
+                        
+                        // Botón reset password
+                        const resetBtn = document.createElement('button');
+                        resetBtn.className = 'btn-icon';
+                        resetBtn.title = 'Resetear contraseña';
+                        resetBtn.innerHTML = '<i class="fas fa-key"></i>';
+                        resetBtn.addEventListener('click', () => resetPassword(user.email));
+                        actionsCell.appendChild(resetBtn);
+                    });
+                } catch (error) {
+                    console.error("Error al cargar usuarios:", error);
+                    showNotification("Error al cargar usuarios", "error");
+                    usersTable.innerHTML = '<tr class="empty-state"><td colspan="5">Error al cargar usuarios</td></tr>';
+                } finally {
+                    refreshBtn.innerHTML = '<i class="fas fa-sync-alt"></i>';
+                }
+            }
+
+            // Función para crear usuario
+            async function handleUserCreate(e) {
+                e.preventDefault();
+                
+                const submitBtn = e.target.querySelector('button[type="submit"]');
+                const originalText = submitBtn.innerHTML;
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creando...';
+                
+                try {
+                    const name = document.getElementById('user-name').value.trim();
+                    const email = document.getElementById('user-email').value.trim();
+                    const password = document.getElementById('user-password').value;
+                    const role = document.getElementById('user-role').value;
+                    
+                    // Validaciones
+                    if (!name || !email || !password || !role) {
+                        throw new Error('Todos los campos son obligatorios');
+                    }
+                    
+                    // 1. Crear usuario en Authentication
+                    const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                    const user = userCredential.user;
+                    
+                    // 2. Guardar datos adicionales en Firestore
+                    await db.collection('users').doc(user.uid).set({
+                        name,
+                        email,
+                        role,
+                        active: true,
+                        emailVerified: false,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        createdBy: auth.currentUser.uid
+                    });
+                    
+                    // 3. Enviar correo de verificación
+                    await user.sendEmailVerification();
+                    
+                    showNotification(`Usuario ${email} creado correctamente. Se envió un correo de verificación.`, 'success');
+                    userForm.reset();
+                    loadUsers();
+                } catch (error) {
+                    console.error("Error al crear usuario:", error);
+                    let errorMessage = error.message;
+                    
+                    if (error.code === 'auth/email-already-in-use') {
+                        errorMessage = 'El correo electrónico ya está en uso';
+                    } else if (error.code === 'auth/invalid-email') {
+                        errorMessage = 'Correo electrónico no válido';
+                    } else if (error.code === 'auth/weak-password') {
+                        errorMessage = 'La contraseña debe tener al menos 6 caracteres';
+                    }
+                    
+                    showNotification(errorMessage, 'error');
+                } finally {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalText;
+                }
+            }
+
+            // Función para eliminar usuario
+            async function deleteUser(userId, email) {
+                if (!confirm(`¿Está seguro de eliminar al usuario ${email}? Esta acción no se puede deshacer.`)) return;
+                
+                try {
+                    // Eliminar de Firestore
+                    await db.collection('users').doc(userId).delete();
+                    
+                    // NOTA: Para eliminar de Authentication necesitarías una Cloud Function
+                    showNotification(`Usuario ${email} eliminado del sistema`, 'success');
+                    loadUsers();
+                } catch (error) {
+                    console.error("Error al eliminar usuario:", error);
+                    showNotification("Error al eliminar usuario: " + error.message, "error");
+                }
+            }
+
+            // Función para resetear contraseña
+            async function resetPassword(email) {
+                try {
+                    await auth.sendPasswordResetEmail(email);
+                    showNotification(`Correo de recuperación enviado a ${email}`, 'success');
+                } catch (error) {
+                    console.error("Error al resetear contraseña:", error);
+                    showNotification("Error al resetear contraseña: " + error.message, "error");
+                }
+            }
+
+            // Función para cerrar sesión
+            async function handleLogout() {
+                try {
+                    await auth.signOut();
+                    window.location.href = 'login.html';
+                } catch (error) {
+                    console.error("Error al cerrar sesión:", error);
+                    showNotification("Error al cerrar sesión", "error");
+                }
+            }
+        }
+
+        // Función para mostrar notificaciones
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = `
+                <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
+                ${message}
+            `;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.classList.add('fade-out');
+                setTimeout(() => notification.remove(), 300);
+            }, 5000);
+        }
+    </script>
+</body>
+</html>

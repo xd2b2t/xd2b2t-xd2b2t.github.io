@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verificación de Correo - Administrador</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6c5ce7;
+            --danger: #d63031;
+            --success: #00b894;
+            --dark: #2d3436;
+            --light: #f5f6fa;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f1f2f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        .verification-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 500px;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+        }
+        
+        .success { color: var(--success); }
+        .warning { color: #fdcb6e; }
+        .danger { color: var(--danger); }
+        
+        h1 {
+            color: var(--dark);
+            margin-bottom: 10px;
+        }
+        
+        p {
+            color: #636e72;
+            margin-bottom: 30px;
+        }
+        
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .btn:hover {
+            background: #5649c0;
+            transform: translateY(-2px);
+        }
+        
+        .user-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: left;
+        }
+        
+        .user-info p {
+            margin: 5px 0;
+            color: var(--dark);
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+        
+        .verified { background: #e8f8f5; color: var(--success); }
+        .unverified { background: #fff4e6; color: #e17055; }
+    </style>
+</head>
+<body>
+    <div class="verification-card">
+        <div class="icon warning">
+            <i class="fas fa-envelope"></i>
+        </div>
+        <h1>Verifica tu correo electrónico</h1>
+        <p>Para completar el proceso de verificación de tu cuenta de administrador</p>
+        
+        <div class="user-info" id="user-info">
+            <p><strong>Correo:</strong> <span id="user-email">Cargando...</span></p>
+            <p><strong>Estado:</strong> 
+                <span class="status-badge unverified" id="verification-status">No verificado</span>
+            </p>
+        </div>
+        
+        <button class="btn" id="verify-btn">
+            <i class="fas fa-paper-plane"></i> Enviar correo de verificación
+        </button>
+        
+        <div style="margin-top: 20px;">
+            <button class="btn" id="force-verify-btn" style="background: var(--danger);">
+                <i class="fas fa-check-circle"></i> Forzar verificación (solo desarrollo)
+            </button>
+        </div>
+    </div>
+
+    <!-- Firebase y Font Awesome -->
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore-compat.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    
+    <script>
+        // Configuración de Firebase (usa tu misma configuración)
+        const firebaseConfig = {
+            apiKey: "AIzaSyC8JDhWWp1jmqJvbu8s2Dsz0Yg2W0F61_s",
+            authDomain: "reservas-universidad.firebaseapp.com",
+            projectId: "reservas-universidad",
+            storageBucket: "reservas-universidad.appspot.com",
+            messagingSenderId: "1020769094680",
+            appId: "1:1020769094680:web:981ed8ea4a8b63be0b076d"
+        };
+
+        // Inicializar Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // Elementos del DOM
+        const userEmail = document.getElementById('user-email');
+        const verifyBtn = document.getElementById('verify-btn');
+        const forceVerifyBtn = document.getElementById('force-verify-btn');
+        const verificationStatus = document.getElementById('verification-status');
+
+        // Verificar estado al cargar
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                userEmail.textContent = user.email;
+                updateVerificationStatus(user);
+                
+                // Verificar si el correo ya está verificado
+                if (user.emailVerified) {
+                    showVerifiedState();
+                } else {
+                    // Forzar refresco del token (a veces el estado no se actualiza)
+                    user.reload().then(() => {
+                        updateVerificationStatus(user);
+                    });
+                }
+            } else {
+                window.location.href = 'login.html'; // Redirigir si no hay sesión
+            }
+        });
+
+        // Función para actualizar el estado de verificación
+        function updateVerificationStatus(user) {
+            if (user.emailVerified) {
+                showVerifiedState();
+            } else {
+                verificationStatus.textContent = "No verificado";
+                verificationStatus.className = "status-badge unverified";
+            }
+        }
+
+        // Mostrar estado verificado
+        function showVerifiedState() {
+            verificationStatus.textContent = "Verificado";
+            verificationStatus.className = "status-badge verified";
+            verifyBtn.disabled = true;
+            verifyBtn.innerHTML = '<i class="fas fa-check"></i> Correo verificado';
+            verifyBtn.style.background = "var(--success)";
+            
+            // Actualizar Firestore
+            db.collection('users').doc(auth.currentUser.uid).update({
+                emailVerified: true
+            });
+        }
+
+        // Enviar correo de verificación
+        verifyBtn.addEventListener('click', () => {
+            const user = auth.currentUser;
+            verifyBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
+            
+            user.sendEmailVerification()
+                .then(() => {
+                    alert(`Correo de verificación enviado a ${user.email}. Revisa tu bandeja.`);
+                    verifyBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Reenviar correo';
+                })
+                .catch(error => {
+                    alert("Error: " + error.message);
+                    verifyBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Intentar nuevamente';
+                });
+        });
+
+        // Forzar verificación (SOLO PARA DESARROLLO)
+        forceVerifyBtn.addEventListener('click', () => {
+            if (!confirm("⚠️ ¿Estás seguro? Esto solo debe usarse en entornos de desarrollo.")) return;
+            
+            const user = auth.currentUser;
+            forceVerifyBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Procesando...';
+            
+            // Actualizar en Authentication (simulación)
+            db.collection('users').doc(user.uid).update({
+                emailVerified: true
+            }).then(() => {
+                // Forzar recarga del usuario
+                user.reload().then(() => {
+                    showVerifiedState();
+                    forceVerifyBtn.innerHTML = '<i class="fas fa-check-circle"></i> Verificación forzada';
+                });
+            }).catch(error => {
+                alert("Error: " + error.message);
+                forceVerifyBtn.innerHTML = '<i class="fas fa-check-circle"></i> Intentar nuevamente';
+            });
+        });
+    </script>
+</body>
+</html>
