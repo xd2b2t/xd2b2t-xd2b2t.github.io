@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Chatbot con DeepSeek</title>
+  <title>Chatbot con Gemini</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
     <style>
@@ -347,14 +347,14 @@
       <div class="chat-header">
         <div class="logo-icon"><i class="fas fa-robot"></i></div>
         <div class="logo-text">
-          <h1>DeepSeek Assistant</h1>
-          <p>Asistente con tecnología de DeepSeek R1</p>
+          <h1>Gemini Assistant</h1>
+          <p>Asistente con tecnología de Google Gemini</p>
         </div>
       </div>
 
       <div class="chat-messages" id="chat-messages">
         <div class="message bot-message">
-          ¡Hola! Soy tu asistente de IA con tecnología de DeepSeek. ¿En qué puedo ayudarte hoy?
+          ¡Hola! Soy tu asistente de IA con tecnología de Google Gemini. ¿En qué puedo ayudarte hoy?
           <span class="message-time">Ahora</span>
         </div>
       </div>
@@ -374,7 +374,7 @@
 
   <div class="loading-spinner" id="loading-spinner">
     <div class="spinner"></div>
-    <p class="loading-text">Conectando con DeepSeek...</p>
+    <p class="loading-text">Conectando con Gemini...</p>
   </div>
 
   <script>
@@ -384,14 +384,15 @@
     const typingIndicator = document.getElementById('typing-indicator');
     const loadingSpinner = document.getElementById('loading-spinner');
 
-    const API_KEY = "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"; // Reemplaza si es necesario
-    const API_URL = "https://openrouter.ai/api/v1/chat/completions";
-    const MODEL = "deepseek/deepseek-r1:free";
+    // Configuración de la API de Google Gemini
+    const API_KEY = "AIzaSyDDWBSHjUV60tavvpOWlqV8K-AlWCf3Fk4"; // Reemplaza con tu API key real
+    const MODEL = "gemini-2.0-flash";
+    const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${API_KEY}`;
 
     let conversationHistory = [
       {
-        role: "system",
-        content: "Eres un asistente de IA útil, amable y detallado. Responde en español."
+        role: "user",
+        parts: [{text: "Eres un asistente de IA útil, amable y detallado. Responde siempre en español."}]
       }
     ];
 
@@ -414,32 +415,44 @@
       loadingSpinner.classList.add('active');
       typingIndicator.style.display = 'flex';
 
-      conversationHistory.push({ role: "user", content: userMessage });
+      // Agregar el mensaje del usuario al historial
+      conversationHistory.push({
+        role: "user",
+        parts: [{text: userMessage}]
+      });
 
       try {
         const response = await fetch(API_URL, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${API_KEY}`,
-            'HTTP-Referer': window.location.origin,
-            'X-Title': 'DeepSeek Chatbot'
           },
           body: JSON.stringify({
-            model: MODEL,
-            messages: conversationHistory,
-            temperature: 0.7,
+            contents: conversationHistory,
+            generationConfig: {
+              temperature: 0.7,
+            }
           })
         });
 
         const data = await response.json();
-        const aiMessage = data.choices?.[0]?.message?.content || "Lo siento, no pude responder.";
+        
+        // Extraer la respuesta de Gemini
+        let aiMessage = "Lo siento, no pude procesar tu solicitud.";
+        if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts) {
+          aiMessage = data.candidates[0].content.parts[0].text;
+        }
 
-        conversationHistory.push({ role: "assistant", content: aiMessage });
+        // Agregar la respuesta al historial
+        conversationHistory.push({
+          role: "model",
+          parts: [{text: aiMessage}]
+        });
+
         addMessage(aiMessage, false);
       } catch (error) {
-        addMessage("❌ Error al conectar con la IA.", false);
-        console.error(error);
+        addMessage("❌ Error al conectar con la IA. Por favor intenta nuevamente.", false);
+        console.error("Error:", error);
       } finally {
         loadingSpinner.classList.remove('active');
         typingIndicator.style.display = 'none';
