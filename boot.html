@@ -138,6 +138,7 @@
             line-height: 1.4;
             position: relative;
             animation: fadeIn 0.3s ease-out;
+            white-space: pre-wrap; /* Mantiene los saltos de línea */
         }
 
         .user-message {
@@ -389,39 +390,66 @@
     const MODEL = "gemini-2.0-flash";
     const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${API_KEY}`;
 
+    // Historial de conversación mejorado
     let conversationHistory = [
       {
         role: "user",
-        parts: [{text: "Eres un asistente de IA útil, amable y detallado. Responde siempre en español."}]
+        parts: [{text: "Eres un asistente de IA útil, amable y detallado. Responde siempre en español. Formatea tus respuestas para que sean claras y legibles, usando saltos de línea cuando sea necesario."}]
+      },
+      {
+        role: "model",
+        parts: [{text: "¡Entendido! Soy tu asistente de IA y estaré encantado de ayudarte. Usaré un formato claro y legible en mis respuestas, con saltos de línea cuando sea necesario para mejorar la lectura. ¿En qué puedo ayudarte hoy?"}]
       }
     ];
 
-    chatInput.addEventListener('input', function () {
+    // Ajustar altura del textarea automáticamente
+    chatInput.addEventListener('input', function() {
       this.style.height = 'auto';
       this.style.height = (this.scrollHeight) + 'px';
     });
 
+    // Función para añadir mensajes al chat
     function addMessage(content, isUser) {
       const messageDiv = document.createElement('div');
       messageDiv.classList.add('message', isUser ? 'user-message' : 'bot-message');
+      
       const now = new Date();
       const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-      messageDiv.innerHTML = `${content}<span class="message-time">${timeString}</span>`;
+      
+      // Formatear el contenido para mantener saltos de línea y listas
+      const formattedContent = formatMessageContent(content);
+      
+      messageDiv.innerHTML = `${formattedContent}<span class="message-time">${timeString}</span>`;
       chatMessages.appendChild(messageDiv);
       chatMessages.scrollTop = chatMessages.scrollHeight;
     }
 
+    // Función para formatear el contenido del mensaje
+    function formatMessageContent(content) {
+      // Reemplazar saltos de línea por <br> y mantener listas
+      return content
+        .replace(/\n/g, '<br>')
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // Negritas
+        .replace(/\*(.*?)\*/g, '<em>$1</em>'); // Cursivas
+    }
+
+    // Obtener respuesta de la IA
     async function getAIResponse(userMessage) {
       loadingSpinner.classList.add('active');
       typingIndicator.style.display = 'flex';
 
-      // Agregar el mensaje del usuario al historial
-      conversationHistory.push({
-        role: "user",
-        parts: [{text: userMessage}]
-      });
-
       try {
+        // Agregar mensaje del usuario al historial
+        conversationHistory.push({
+          role: "user",
+          parts: [{text: userMessage}]
+        });
+
+        // Limitar el historial para evitar sobrecarga
+        if (conversationHistory.length > 10) {
+          conversationHistory = conversationHistory.slice(-10);
+        }
+
         const response = await fetch(API_URL, {
           method: 'POST',
           headers: {
@@ -431,19 +459,39 @@
             contents: conversationHistory,
             generationConfig: {
               temperature: 0.7,
-            }
+              topP: 0.9,
+              topK: 40
+            },
+            safetySettings: [
+              {
+                "category": "HARM_CATEGORY_HARASSMENT",
+                "threshold": "BLOCK_ONLY_HIGH"
+              },
+              {
+                "category": "HARM_CATEGORY_HATE_SPEECH",
+                "threshold": "BLOCK_ONLY_HIGH"
+              },
+              {
+                "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+                "threshold": "BLOCK_ONLY_HIGH"
+              },
+              {
+                "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
+                "threshold": "BLOCK_ONLY_HIGH"
+              }
+            ]
           })
         });
 
         const data = await response.json();
         
-        // Extraer la respuesta de Gemini
+        // Extraer y formatear la respuesta
         let aiMessage = "Lo siento, no pude procesar tu solicitud.";
-        if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts) {
+        if (data.candidates?.[0]?.content?.parts?.[0]?.text) {
           aiMessage = data.candidates[0].content.parts[0].text;
         }
 
-        // Agregar la respuesta al historial
+        // Agregar respuesta al historial
         conversationHistory.push({
           role: "model",
           parts: [{text: aiMessage}]
@@ -451,23 +499,32 @@
 
         addMessage(aiMessage, false);
       } catch (error) {
-        addMessage("❌ Error al conectar con la IA. Por favor intenta nuevamente.", false);
         console.error("Error:", error);
+        addMessage("❌ Error al conectar con la IA. Por favor intenta nuevamente.", false);
       } finally {
         loadingSpinner.classList.remove('active');
         typingIndicator.style.display = 'none';
       }
     }
 
-    chatForm.addEventListener('submit', function (e) {
+    // Manejar envío del formulario
+    chatForm.addEventListener('submit', function(e) {
       e.preventDefault();
       const message = chatInput.value.trim();
-      if (message === '') return;
+      if (!message) return;
 
       addMessage(message, true);
       chatInput.value = '';
       chatInput.style.height = 'auto';
       getAIResponse(message);
+    });
+
+    // Permitir enviar con Shift+Enter para nueva línea, Enter para enviar
+    chatInput.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        chatForm.dispatchEvent(new Event('submit'));
+      }
     });
   </script>
 </body>
