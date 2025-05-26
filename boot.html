@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Chatbot con Gemini</title>
+  <title>Chatbot con Gemini y Voz</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
     <style>
@@ -138,7 +138,7 @@
             line-height: 1.4;
             position: relative;
             animation: fadeIn 0.3s ease-out;
-            white-space: pre-wrap; /* Mantiene los saltos de línea */
+            white-space: pre-wrap;
         }
 
         .user-message {
@@ -223,6 +223,31 @@
             transform: translateY(0);
         }
 
+        .voice-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            border: none;
+            background: var(--dark-3);
+            color: var(--light-1);
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .voice-btn:hover {
+            background: var(--dark-2);
+        }
+
+        .voice-btn.active {
+            background: var(--danger);
+            color: white;
+            animation: pulse 1.5s infinite;
+        }
+
         .typing-indicator {
             display: flex;
             gap: 0.3rem;
@@ -261,6 +286,18 @@
             }
             30% {
                 transform: translateY(-5px);
+            }
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(214, 48, 49, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(214, 48, 49, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(214, 48, 49, 0);
             }
         }
 
@@ -349,13 +386,13 @@
         <div class="logo-icon"><i class="fas fa-robot"></i></div>
         <div class="logo-text">
           <h1>Gemini Assistant</h1>
-          <p>Asistente con tecnología de Google Gemini</p>
+          <p>Asistente con voz - Google Gemini</p>
         </div>
       </div>
 
       <div class="chat-messages" id="chat-messages">
         <div class="message bot-message">
-          ¡Hola! Soy tu asistente de IA con tecnología de Google Gemini. ¿En qué puedo ayudarte hoy?
+          ¡Hola! Soy tu asistente de IA con voz. Puedes hablarme usando el botón de micrófono o escribiendo tu mensaje.
           <span class="message-time">Ahora</span>
         </div>
       </div>
@@ -367,7 +404,12 @@
       <div class="chat-input-container">
         <form class="chat-form" id="chat-form">
           <textarea class="chat-input" id="chat-input" placeholder="Escribe tu mensaje..." rows="1" required></textarea>
-          <button type="submit" class="send-btn"><i class="fas fa-paper-plane"></i></button>
+          <button type="button" class="voice-btn" id="voice-btn" title="Hablar con el asistente">
+            <i class="fas fa-microphone"></i>
+          </button>
+          <button type="submit" class="send-btn" title="Enviar mensaje">
+            <i class="fas fa-paper-plane"></i>
+          </button>
         </form>
       </div>
     </div>
@@ -384,23 +426,69 @@
     const chatMessages = document.getElementById('chat-messages');
     const typingIndicator = document.getElementById('typing-indicator');
     const loadingSpinner = document.getElementById('loading-spinner');
+    const voiceBtn = document.getElementById('voice-btn');
 
     // Configuración de la API de Google Gemini
     const API_KEY = "AIzaSyDDWBSHjUV60tavvpOWlqV8K-AlWCf3Fk4"; // Reemplaza con tu API key real
     const MODEL = "gemini-2.0-flash";
     const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${API_KEY}`;
 
-    // Historial de conversación mejorado
+    // Configuración de voz
+    const speechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const recognition = speechRecognition ? new speechRecognition() : null;
+    const speechSynthesis = window.speechSynthesis;
+    
+    // Variables de estado
+    let isListening = false;
+    let finalTranscript = '';
     let conversationHistory = [
       {
         role: "user",
-        parts: [{text: "Eres un asistente de IA útil, amable y detallado. Responde siempre en español. Formatea tus respuestas para que sean claras y legibles, usando saltos de línea cuando sea necesario."}]
+        parts: [{text: "Eres un asistente de IA útil, amable y detallado. Responde siempre en español. Formatea tus respuestas para que sean claras y legibles, usando saltos de línea cuando sea necesario. Mantén respuestas breves cuando uses voz."}]
       },
       {
         role: "model",
-        parts: [{text: "¡Entendido! Soy tu asistente de IA y estaré encantado de ayudarte. Usaré un formato claro y legible en mis respuestas, con saltos de línea cuando sea necesario para mejorar la lectura. ¿En qué puedo ayudarte hoy?"}]
+        parts: [{text: "¡Entendido! Soy tu asistente de IA y estaré encantado de ayudarte. Usaré un formato claro y legible en mis respuestas. ¿En qué puedo ayudarte hoy?"}]
       }
     ];
+
+    // Inicializar reconocimiento de voz si está disponible
+    if (recognition) {
+      recognition.continuous = false;
+      recognition.interimResults = false;
+      recognition.lang = 'es-ES';
+
+      recognition.onstart = () => {
+        isListening = true;
+        voiceBtn.classList.add('active');
+        chatInput.placeholder = "Escuchando...";
+      };
+
+      recognition.onend = () => {
+        isListening = false;
+        voiceBtn.classList.remove('active');
+        chatInput.placeholder = "Escribe tu mensaje...";
+      };
+
+      recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        finalTranscript = transcript.trim();
+        if (finalTranscript) {
+          chatInput.value = finalTranscript;
+          addMessage(finalTranscript, true);
+          getAIResponse(finalTranscript);
+        }
+      };
+
+      recognition.onerror = (event) => {
+        console.error('Error en reconocimiento de voz:', event.error);
+        addMessage("❌ Error en el reconocimiento de voz", false);
+        voiceBtn.classList.remove('active');
+      };
+    } else {
+      voiceBtn.style.display = 'none';
+      console.warn('El reconocimiento de voz no está disponible en este navegador');
+    }
 
     // Ajustar altura del textarea automáticamente
     chatInput.addEventListener('input', function() {
@@ -416,7 +504,6 @@
       const now = new Date();
       const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
       
-      // Formatear el contenido para mantener saltos de línea y listas
       const formattedContent = formatMessageContent(content);
       
       messageDiv.innerHTML = `${formattedContent}<span class="message-time">${timeString}</span>`;
@@ -426,11 +513,28 @@
 
     // Función para formatear el contenido del mensaje
     function formatMessageContent(content) {
-      // Reemplazar saltos de línea por <br> y mantener listas
       return content
         .replace(/\n/g, '<br>')
-        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // Negritas
-        .replace(/\*(.*?)\*/g, '<em>$1</em>'); // Cursivas
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*(.*?)\*/g, '<em>$1</em>');
+    }
+
+    // Función para hablar el texto
+    function speak(text) {
+      if (!speechSynthesis) {
+        console.warn('La síntesis de voz no está disponible en este navegador');
+        return;
+      }
+      
+      // Cancelar cualquier habla previa
+      speechSynthesis.cancel();
+      
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'es-ES';
+      utterance.rate = 1.0;
+      utterance.pitch = 1.0;
+      
+      speechSynthesis.speak(utterance);
     }
 
     // Obtener respuesta de la IA
@@ -498,6 +602,9 @@
         });
 
         addMessage(aiMessage, false);
+        
+        // Hablar la respuesta
+        speak(aiMessage);
       } catch (error) {
         console.error("Error:", error);
         addMessage("❌ Error al conectar con la IA. Por favor intenta nuevamente.", false);
@@ -517,6 +624,21 @@
       chatInput.value = '';
       chatInput.style.height = 'auto';
       getAIResponse(message);
+    });
+
+    // Manejar botón de voz
+    voiceBtn.addEventListener('click', function() {
+      if (!recognition) {
+        addMessage("❌ El reconocimiento de voz no está disponible en tu navegador", false);
+        return;
+      }
+      
+      if (isListening) {
+        recognition.stop();
+      } else {
+        finalTranscript = '';
+        recognition.start();
+      }
     });
 
     // Permitir enviar con Shift+Enter para nueva línea, Enter para enviar
